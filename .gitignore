@@ -1,3 +1,7 @@
 **.Rhistory
 **.RData
 **.pdf
+
+# ignore covidMap due to large size
+covidMap.html
+covidMap_files/
