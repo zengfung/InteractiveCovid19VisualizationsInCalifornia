@@ -1,6 +1,8 @@
 load("covid.RData")
 data = us[[2]]
 
+################################################################################
+# setting up data
 # displayNames
 displayNames = sapply(data, function(x) x$display_name)
 # geoid 
@@ -52,6 +54,8 @@ covidDataByCounty = lapply(calcounty.data, covidData)
 covidDataCal = do.call("rbind", covidDataByCounty)
 covidDataCal$County = as.factor(covidDataCal$County)
 
+######################################################################
+# interactive trend plot
 # make ggplot
 library(ggplot2)
 library(plotly)
@@ -100,17 +104,11 @@ trendPlot.plotly
 library(htmlwidgets)
 saveWidget(trendPlot.plotly, "covidTrend.html", selfcontained = FALSE, title = "Covid-19 Trend in California")
 
-
+################################################################
 # interactive covid map
-# source: https://github.com/lrjager/maryland-poison-center-graphics/blob/master/mpc-map-FINAL.Rmd
-# source: https://towardsdatascience.com/animating-your-data-visualizations-like-a-boss-using-r-f94ae20843e3
-# source: https://www.5haw.com/posts/week-3-making-an-animated-map-using-maps-ggplot2-and-gganimate/
-# source: https://plotly.com/r/sliders/
 library(maps)
-
 # join covidDataCal with mapCounty
 calCountyMap = map_data('county', 'california')
-calStateMap = map_data('state', 'california')
 calCountyMap$subregion = stringr::str_to_title(calCountyMap$subregion)
 plotData = inner_join(calCountyMap, covidDataCal, by = c("subregion" = "County"))
 # make the ggplot
@@ -132,17 +130,16 @@ covidMap = ggplot(data = plotData, aes(frame = Date,
   lims(x = c(-125, -114), y = c(32,42.5)) +
   scale_fill_gradientn(colors = rev(heat.colors(10)), na.value="grey80") +
   labs(title="Rate of COVID-19 Cases", x = "longitude", y = "latitude", fill = "Cases Per 10k Pop.")
-covidMap.plotly = ggplotly(covidMap, tooltip = "text") %>%
-  animation_slider(method = "skip",
-                   currentvalue = list(prefix = "Day: "))
+# make interactive plot using plotly
+covidMap.plotly = ggplotly(covidMap, tooltip = "text")
 covidMap.plotly
 saveWidget(covidMap.plotly, "covidMap.html", selfcontained = FALSE, title = "Covid-19 Cases by California Counties")
 
+#######################################################################
 # gif of covid map
 library(gganimate)
 library(gifski)
 animatedMap <- covidMap +
-  # geom_text(data=plotData, aes(y=40, x=-117.5, label=as.Date(Date)), check_overlap = TRUE, size=8, fontface="bold") +
   transition_manual(Date)
 # get plot in GIF
 mapGIF = animate(animatedMap, duration = 10, fps = 30, width = 500, height = 500, renderer = gifski_renderer())
@@ -150,3 +147,4 @@ mapGIF = animate(animatedMap, duration = 10, fps = 30, width = 500, height = 500
 mapGIF
 # save gif
 anim_save("covidCal.gif", animation=mapGIF)
+

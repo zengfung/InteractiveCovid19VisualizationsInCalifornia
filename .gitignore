@@ -5,3 +5,6 @@
 # ignore covidMap due to large size
 covidMap.html
 covidMap_files/
+
+# ignore report r markdown file
+report.Rmd

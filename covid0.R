@@ -35,7 +35,3 @@ us = fromJSON(tt)
 length(us$data)
 
 save(us, file = "covid.RData")
-# libraries: plotly, htmlwidgets
-# ggplotly(ggplot.obj, tooltip), highlight(plotly.obj, on, off)
-# saveWidget(plotly.obj, filename, selfcontained = FALSE)
-# ply$sizing Policy$browser$fill = FALSE
