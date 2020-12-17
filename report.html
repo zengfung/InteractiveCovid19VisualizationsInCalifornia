@@ -587,12 +587,13 @@ anim_save(&quot;covidCal.gif&quot;, animation=mapGIF)</code></pre>
 <h3>Interactive COVID-19 Map</h3>
 <p>The code used to created the interactive COVID-19 map using <code>plotly</code> might seem very simple and straightforward below, and that is due to all the required settings have already been computed in the process of building the <code>ggplot</code> map.</p>
 <p>I had initially tried creating the <code>plotly</code> object by adding functions and parameters using the <code>layout()</code> and <code>add_trace()</code> functions, which did work in certain ways, but somehow produced bugs in certain other areas. This was fixed by using the <code>frame = Date</code> parameter in creating the <code>ggplot</code> map instead of dealing with the <code>plotly</code> functions here, as mentioned in a previous section.</p>
+<p>Another issue that I faced was that the size of the <code>plotly</code> map object was too large, and as a result was not able to load into browsers. To solve this problem, I reduced the amount of info in the tooltips (only Date, County, Cumulative Cases, and Cases per 10k Pop. are shown), and added the <code>partial_bundle()</code> function as I was building the <code>ggplotly</code> object. I managed to reduced the size of the HTML file to be less than 150MB, which made it possible to load on my Chrome browser.</p>
 <pre class="r"><code># make interactive plot using plotly
-covidMap.plotly = ggplotly(covidMap, tooltip = &quot;text&quot;)
+covidMap.plotly = ggplotly(covidMap, tooltip = &quot;text&quot;) %&gt;% partial_bundle()
 covidMap.plotly
 saveWidget(covidMap.plotly, &quot;covidMap.html&quot;, selfcontained = FALSE, title = &quot;Covid-19 Cases by California Counties&quot;)</code></pre>
 <p>The result is the attached file “covidMap.html”.</p>
-<p>Disclaimer: This HTML file takes a long time to load.</p>
+<p>Disclaimer: This HTML file can take a long time to load due to its large file size.</p>
 </div>
 </div>
 <div id="resources-used" class="section level2">

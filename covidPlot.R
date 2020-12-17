@@ -117,21 +117,15 @@ plotData$Date = as.factor(plotData$Date)
 plotData$casesPer10k = plotData$CumCases/plotData$Population*10000
 covidMap = ggplot(data = plotData, aes(frame = Date, 
                                       text = paste("County: ", FullName, 
-                                                "\nDate: ", Date,
                                                 "\nCase/10k Pop.: ", casesPer10k,
-                                                "\nDaily Cases: ", DailyCases,
-                                                "\nCum. Cases: ", CumCases, 
-                                                "\nDaily Deaths: ", DailyDeaths,
-                                                "\nCum. Deaths: ", CumDeaths,
-                                                "\n% Cases/Capita (Day): ", round(PercentCasesPerCapita, 4),
-                                                "\n% Deaths/Capita (Day):", round(PercentDeathsPerCapita, 4),sep = ""))) + 
+                                                "\nCum. Cases: ", CumCases,sep = ""))) + 
   geom_polygon(aes(x=long, y = lat, fill=casesPer10k, group = group), color="black") + 
   geom_text(aes(y=40, x=-116, label=as.Date(Date)), check_overlap = TRUE, size=4, fontface="bold") +
   lims(x = c(-125, -114), y = c(32,42.5)) +
   scale_fill_gradientn(colors = rev(heat.colors(10)), na.value="grey80") +
-  labs(title="Rate of COVID-19 Cases", x = "longitude", y = "latitude", fill = "Cases Per 10k Pop.")
+  labs(title="Rate of COVID-19 Cases", x = "Longitude", y = "Latitude", fill = "Cases Per 10k Pop.")
 # make interactive plot using plotly
-covidMap.plotly = ggplotly(covidMap, tooltip = "text")
+covidMap.plotly = ggplotly(covidMap, tooltip = c("frame", "text")) %>% partial_bundle()
 covidMap.plotly
 saveWidget(covidMap.plotly, "covidMap.html", selfcontained = FALSE, title = "Covid-19 Cases by California Counties")
 
